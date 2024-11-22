@@ -19,24 +19,23 @@ data(cora_gold)
 data(cora_gold_update)
 ```
 
-
 ## Question 1
 
-a. False
+a.  False
 
-b. True
+b.  True
 
-c. True
+c.  True
 
-d. False
+d.  False
 
-e. True
+e.  True
 
-f. False
+f.  False
 
 ## Question 2
 
-a.
+a.  
 
 ```{r}
 # Create sets
@@ -57,7 +56,7 @@ The Jaccard similarity between the second and third set is $\frac{1}{6}$.
 
 The Jaccard similarity between the first and third set is $\frac{2}{5}$.
 
-b. 
+b.  
 
 ```{r}
 # Initialize sentences
@@ -69,17 +68,17 @@ token.1 <- tokenize_character_shingles(one, 9)
 token.2 <- tokenize_character_shingles(two, 9)
 ```
 
-c. Storing data in the form of a characteristic matrix is impractical because they can become very large when dealing with large datasets. A characteristic matrix can contain many repeated values and leads to unnecessary data duplication. Additionally, operations on large matrices can be computationally expensive.
+c.  Storing data in the form of a characteristic matrix is impractical because they can become very large when dealing with large datasets. A characteristic matrix can contain many repeated values and leads to unnecessary data duplication. Additionally, operations on large matrices can be computationally expensive.
 
-d. The minhash function is used to get an approximation of Jaccard similarity using signatures. The hash function is first applied to the rows and then takes the minimum hash value for each column, reducing the matrix's dimensionality.
+d.  The minhash function is used to get an approximation of Jaccard similarity using signatures. The hash function is first applied to the rows and then takes the minimum hash value for each column, reducing the matrix's dimensionality.
 
-e. Minhashing approximates the Jaccard similarity of two sets. The probability that two columns have the same minhash value is equal to the Jaccard similarity of the two sets that they are supposed to represent.
+e.  Minhashing approximates the Jaccard similarity of two sets. The probability that two columns have the same minhash value is equal to the Jaccard similarity of the two sets that they are supposed to represent.
 
-f. From the permuted matrix, the first row of $S$ is ${3, 2, 1, 2}$. This was done by identifying the first $1$ in each column of the permuted matrix.
+f.  From the permuted matrix, the first row of $S$ is ${3, 2, 1, 2}$. This was done by identifying the first $1$ in each column of the permuted matrix.
 
 ## Question 3
 
-a. 
+a.  
 
 ```{r}
 # Merge cora_gold with cora_gold_update once on id1 then once on id2
@@ -92,7 +91,7 @@ mismatches <- check[check$unique_id1 != check$unique_id2, ]
 
 There are errors in $\texttt{cora\_gold\_update}$. The id pair $(113, 122)$ in $\texttt{cora\_gold}$ means that both ids should map to the same unique id in $\texttt{cora\_gold\_update}$. However, id $113$ maps to unique id $16$ while id $122$ maps to unique id $17$.
 
-b.
+b.  
 
 ```{r}
 # Calculate number of rows in mismatches
@@ -101,9 +100,12 @@ nrow(mismatches)
 
 There are 21856 that exist between $\texttt{cora\_gold}$ and $\texttt{cora\_gold\_update}$.
 
-c.
+c.  
 
-(i)
+```{=html}
+<!-- -->
+```
+(i) 
 
 The below code was taken from hw-3-partial-solutions-steorts.Rmd
 
@@ -147,7 +149,7 @@ sum(choose(table(unique_df$unique_id),2)) == nrow(cora_gold)
 
 The number of matches in $\texttt{cora\_gold}$ equals the number of matches we would expect from these unique IDs.
 
-(ii)
+(ii) 
 
 ```{r}
 # Merge cora_gold with cora_gold_update once on id1 then once on id2
