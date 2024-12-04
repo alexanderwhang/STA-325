@@ -114,7 +114,7 @@ The estimated mixing proportions of component 1 and 2 are 0.5135 and 0.4865 resp
 
 The estimated rate parameters of component 1 and 2 are 0.4998 and 1.9721 respectively. The estimation for the first component is just 0.0002 units away from the true rate parameter of 0.5. The estimation for the second component is 0.0279 units away from the true rate parameter of 2.0.
 
-b. Yes, the parameter estimates appear close to the true estimates. Because the algorithm converges successfully after a sufficient amount of iterations, it is ok to say that the mixture model recovers the true parameters well.
+b. Yes, the parameter estimates appear close to the true estimates. Because the algorithm converges successfully after a sufficient amount of iterations, it is ok to say that the mixture model recovers the true parameters well, as they are very similar to the estimates.
 
 c.
 
@@ -264,54 +264,48 @@ data <- c(rexp(n_samples * true_proportions[1], rate = true_rates[1]),
           rexp(n_samples * true_proportions[2], rate = true_rates[2]))
 
 set.seed(123)
-K <- 2
+K <- 2 # how many clusters
 kmeans_result <- kmeans(data, centers = 2)
 
-# Step 2: Calculate initial mixing proportions
-cluster_labels <- kmeans_result$cluster
-mixing_proportions <- table(cluster_labels) / length(data) # Proportions for each cluster
+# Calculate initial mixing proportions
+component_labels <- kmeans_result$cluster
+mixing_proportions <- table(component_labels) / length(data)
 
-# Step 3: Calculate initial rate parameters (λ)
-rate_parameters <- numeric(K) # Initialize rate parameters
-for (k in 1:K) {
-  cluster_data <- data[cluster_labels == k] # Data points in cluster k
-  rate_parameters[k] <- 1 / mean(cluster_data) # Estimate rate as reciprocal of mean
+# Calculate initial rate parameters
+rate_parameters <- numeric(K)
+for (k in 1:K) { # k = 2 in this instance
+  cluster_data <- data[component_labels == k] # data points in component k
+  rate_parameters[k] <- 1 / mean(cluster_data) # rate as reciprocal of mean
 }
 
-# Print initial parameters
-cat("Initial Mixing Proportions:", mixing_proportions, "\n")
-cat("Initial Rate Parameters:", rate_parameters, "\n")
-
+# New exponentialMixture function with initial estimate parameters
 exponentialMixture <- function(data, K, max_iter = 1000, tol = 1e-5,
                                 init_pi = NULL, init_lambda = NULL) {
   n <- length(data)
-  pi <- if (is.null(init_pi)) rep(1/K, K) else init_pi # Initialize mixing proportions
-  lambda <- if (is.null(init_lambda)) runif(K, 0.1, 1) else init_lambda # Initialize rate parameters
-  log_likelihoods <- numeric(max_iter) # Store log-likelihood values
+  pi <- if (is.null(init_pi)) rep(1/K, K) else init_pi # mixing proportions
+  lambda <- if (is.null(init_lambda)) runif(K, 0.1, 1) else init_lambda # rate parameters
+  log_likelihoods <- numeric(max_iter) # store log-likelihood values
   
-  for (iter in 1:max_iter) {
-    # E-step: Compute posterior probabilities (gammas)
+  for (iter in 1:max_iter) { # E-step: numerator of the gammas
     gamma <- matrix(NA, nrow = n, ncol = K)
     for (k in 1:K) {
       gamma[, k] <- pi[k] * dexp(data, rate = lambda[k])
     }
-    row_sums <- rowSums(gamma) # Normalize probabilities
-    gamma <- gamma / row_sums
+    row_sums <- rowSums(gamma) # denominator of the gammas
+    gamma <- gamma / row_sums  # normalize probabilities
 
     # M-step: Update mixing proportions and rate parameters
     pi_old <- pi
     lambda_old <- lambda
-    pi <- colMeans(gamma) # Update mixing proportions
+    pi <- colMeans(gamma) # update mixing proportions
     for (k in 1:K) {
-      lambda[k] <- sum(gamma[, k]) / sum(gamma[, k] * data) # Update rate parameters
+      lambda[k] <- sum(gamma[, k]) / sum(gamma[, k] * data) # update rate parameters
     }
 
-    # Compute log-likelihood
-    log_likelihoods[iter] <- sum(log(row_sums))
+    log_likelihoods[iter] <- sum(log(row_sums)) # calculate log-likelihood
 
-    # Check for convergence
     if (max(abs(pi - pi_old)) < tol && max(abs(lambda - lambda_old)) < tol) {
-      log_likelihoods <- log_likelihoods[1:iter] # Trim to the number of iterations
+      log_likelihoods <- log_likelihoods[1:iter] # trim to the number of iterations
       cat("Convergence reached at iteration", iter, "with log-likelihood:", log_likelihoods[iter], "\n")
       break
     }
@@ -320,7 +314,7 @@ exponentialMixture <- function(data, K, max_iter = 1000, tol = 1e-5,
   return(list(pi = pi, lambda = lambda, log_likelihood = log_likelihoods))
 }
 
-# Run EM with k-means initialization
+# Run EM function with k-means initialization
 results <- exponentialMixture(data, K = K, init_pi = as.numeric(mixing_proportions), init_lambda = rate_parameters)
 
 # Create a data frame to display the results in a table
@@ -349,7 +343,7 @@ for (x in 2:5) {
   results_table <- rbind(results_table, list(x, 2, round(result$pi, 4)[2], round(result$lambda, 4)[2]))
 }
 
-# move results to a table
+# Move results to a table
 kable(results_table, caption = "Estimated Parameters for the Mixture Model", format = "pipe")
 
 ```
