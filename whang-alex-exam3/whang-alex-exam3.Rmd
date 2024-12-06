@@ -62,16 +62,18 @@ kmeans2 <- kmeans(data2, centers = 2, nstart = 20, algorithm = "Lloyd", iter.max
 # plot results for data sets
 plot(data1, col = kmeans1$cluster, pch = 19, main = "Data 1 K-means Clustering")
 legend("topleft", legend = c("1", "2"), fill = c("black", "red"), title = "cluster")
+points(kmeans1$centers, col = 1:2, pch = 22)
 
-plot(data2, col = kmeans1$cluster, pch = 19, main = "Data 2 K-means Clustering")
-legend("topleft", legend = c("1", "2"), fill = c("red", "black"), title = "cluster")
+plot(data2, col = kmeans2$cluster, pch = 19, main = "Data 2 K-means Clustering")
+legend("topleft", legend = c("1", "2"), fill = c("black", "red"), title = "cluster")
+points(kmeans2$centers, col = 1:2, pch = 22)
 ```
 
-Clusters are indicated by color. In these data sets, black represents one cluster and red represents the other cluster.
+Clusters are indicated by color and their centers are indicated with a square. In these data sets, black represents one cluster and red represents the other cluster.
 
-ii. For data1, k-means performed very well. The clusters are clearly identified and separated and the data is clustered in spherical shapes which k-means will be effective.
+ii. For data1, k-means performed very well. The clusters are clearly identified and separated and the data is clustered in spherical shapes which k-means will be effective for.
 
-For data2, k-means performed poorly. The clusters aren't very spherical as the data has an outer and inner region almost like a ring. K-means incorrectly divides the clusters as some of the middle region and a lot of the outer region form to make one cluster while some of the outer region and a lot of the inner region form to make the other cluster. This leads to incorrect assignments of data points as k-means fails to separate the regions.
+For data2, k-means performed poorly. The clusters aren't very spherical as the data has an outer and inner region almost like a ring. K-means incorrectly divides the clusters as all of the middle region and a lot of the outer region form to make one cluster while the rest of the outer region makes the other cluster. This leads to incorrect assignments of data points as k-means fails to separate the regions.
 
 iii. For data2, k-means failed to correctly cluster the points into meaningful groups. Because this algorithm relies on Euclidian distance to assign points to the nearest centroid, data2 is not suited for k-means because clusters have non-convex shapes instead of spherical shapes. This ring like structure doesn't work with the k-means assumption about cluster shape because of its weird shape.
 
@@ -125,4 +127,4 @@ plot(data2, col = gmm2$classification, pch = 19, main = "Data 2 GMM Clustering")
 legend("topleft", legend = c("1", "2"), fill = c("black", "red"), title = "cluster")
 ```
 
-c. Yes, there are multiple things that suggest that modeling the second data set as a mixture of Gaussians is unrealistic. GMMs typically cannot handle circular data like there is in data set 2. Additionally, because each cluser is modeled by a Gaussian distribution with parameters in a GMM, the EM algorithm might try to force one Gaussian to the inner cluster and one to part of the outer ring. This might lead to unrealistic parameters. Points in the same actual cluster might be incorrectly assigned to different Gaussian components due to the model assigning different parts of the outer ring into different sections. Lastly, the variance of the outer Gaussian might be very large to accommodate the width of the ring which could become an issue for parameter estimation.
+c. Yes, there are multiple things that suggest that modeling the second data set as a mixture of Gaussians is unrealistic. Although the GMM package I use modeled the data well, GMMs typically cannot handle circular data like there is in data set 2. Additionally, because each cluser is modeled by a Gaussian distribution with parameters in a GMM, the EM algorithm might try to force one Gaussian to the inner cluster and one to part of the outer ring. This might lead to unrealistic parameters. Points in the same actual cluster might be incorrectly assigned to different Gaussian components due to the model assigning different parts of the outer ring into different sections. Lastly, the variance of the outer Gaussian might be very large to accommodate the width of the ring which could become an issue for parameter estimation.
